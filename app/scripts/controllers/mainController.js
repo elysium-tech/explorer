@@ -4,46 +4,16 @@ angular.module('ethExplorer')
     .controller('mainCtrl', function ($rootScope, $scope, $location) {
 
         // Display & update block list
-        console.log("dsadsadsa");
-
-        getETHRates();
+        // getETHRates();
         updateBlockList();
         updateTXList();
         updateStats();
-        getHashrate();
+        // getHashrate();
+        setTimeout(updateBlockList, 15 * 1000);
 
-        // let filter = web3.eth.filter("latest");
-        // filter.get(function(error, result){
-        //     if (!error) {
-        //         console.log(this);
-        //         let i = stokazzo / 0;
-        //         // getETHRates();
-        //         // updateBlockList();
-        //         // updateTXList();
-        //         // updateStats();
-        //         // getHashrate();
-        //         // $scope.$apply();
-        //     }
-        //
-        //     filter.stopWatching();
-        // });
-
-        // web3.eth.filter("latest", function(error, result){
-        //   if (!error) {
-        //     console.log(this);
-        //     let i = stokazzo / 0;
-        //     // getETHRates();
-        //     // updateBlockList();
-        //     // updateTXList();
-        //     // updateStats();
-        //     // getHashrate();
-        //     // $scope.$apply();
-        //   }
-        // });
 
         $scope.processRequest= function(){
             var requestStr = $scope.ethRequest;
-            console.log("VELLETRIIIIII");
 
             if (requestStr!==undefined){
 
@@ -94,17 +64,23 @@ angular.module('ethExplorer')
         }
 
         function updateStats() {
-          $scope.blockNum = web3.eth.blockNumber; // now that was easy
 
-          if($scope.blockNum!==undefined){
-
-            // TODO: put the 2 web3.eth.getBlock into the async function below
-            //       easiest to first do with fastInfosCtrl
-              var blockNewest = web3.eth.getBlock($scope.blockNum);
-
-              if(blockNewest!==undefined){
-
-                // difficulty
+            // FIXME This promise is called **EVERYWHERE** should be centralized and called once!
+            new Promise((resolve, reject) => {
+                web3.eth.getBlockNumber((err, blockNumber) => {
+                    $scope.blockNum = blockNumber;  // TODO This is the 15th time I see this block of code...
+                    resolve(blockNumber);
+                });
+            })
+            .then(blockNumber => {
+                return new Promise((resolve, reject) => {
+                    web3.eth.getBlock(blockNumber, true, (err, block) => {
+                        resolve(block);
+                    })
+                });
+            })
+            .then(blockNewest => {
+// difficulty
                 $scope.difficulty = blockNewest.difficulty;
                 $scope.difficultyToExponential = blockNewest.difficulty.toExponential(3);
 
@@ -125,56 +101,52 @@ angular.module('ethExplorer')
                 $scope.gasLimit = new BigNumber(blockNewest.gasLimit).toFormat(0) + " m/s";
 
                 // Time
-                  var newDate = new Date();
-                  newDate.setTime(blockNewest.timestamp*1000);
-                  $scope.time = newDate.toUTCString();
+                var newDate = new Date();
+                newDate.setTime(blockNewest.timestamp*1000);
+                $scope.time = newDate.toUTCString();
 
-                  $scope.secondsSinceBlock1 = blockNewest.timestamp - 1438226773;
-                  $scope.daysSinceBlock1 = ($scope.secondsSinceBlock1 / 86400).toFixed(2);
+                $scope.secondsSinceBlock1 = blockNewest.timestamp - 1438226773;
+                $scope.daysSinceBlock1 = ($scope.secondsSinceBlock1 / 86400).toFixed(2);
 
-                  // Average Block Times:
-                  // TODO: make fully async, put below into 'fastInfosCtrl'
+                // Average Block Times:
+                // TODO: make fully async, put below into 'fastInfosCtrl'
 
-                  var blockBefore = web3.eth.getBlock($scope.blockNum - 1);
-                  if(blockBefore!==undefined){
-                  $scope.blocktime = blockNewest.timestamp - blockBefore.timestamp;
-                  }
-                  $scope.range1=100;
-                  range = $scope.range1;
-                  var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
-                  if(blockBefore!==undefined){
-                  $scope.blocktimeAverage1 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
-                  }
-                  $scope.range2=1000;
-                  range = $scope.range2;
-                  var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
-                  if(blockBefore!==undefined){
-                  $scope.blocktimeAverage2 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
-                  }
-                  $scope.range3=10000;
-                  range = $scope.range3;
-                  var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
-                  if(blockBefore!==undefined){
-                  $scope.blocktimeAverage3 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
-                  }
-                  $scope.range4=100000;
-                  range = $scope.range4;
-                  var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
-                  if(blockBefore!==undefined){
-                  $scope.blocktimeAverage4 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
-                  }
+                // var blockBefore = web3.eth.getBlock($scope.blockNum - 1);
+                // if(blockBefore!==undefined){
+                //     $scope.blocktime = blockNewest.timestamp - blockBefore.timestamp;
+                // }
+                // $scope.range1=100;
+                // range = $scope.range1;
+                // var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
+                // if(blockBefore!==undefined){
+                //     $scope.blocktimeAverage1 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
+                // }
+                // $scope.range2=1000;
+                // range = $scope.range2;
+                // var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
+                // if(blockBefore!==undefined){
+                //     $scope.blocktimeAverage2 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
+                // }
+                // $scope.range3=10000;
+                // range = $scope.range3;
+                // var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
+                // if(blockBefore!==undefined){
+                //     $scope.blocktimeAverage3 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
+                // }
+                // $scope.range4=100000;
+                // range = $scope.range4;
+                // var blockPast = web3.eth.getBlock(Math.max($scope.blockNum - range,0));
+                // if(blockBefore!==undefined){
+                //     $scope.blocktimeAverage4 = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
+                // }
+                //
+                // range = $scope.blockNum;
+                // var blockPast = web3.eth.getBlock(1);
+                // if(blockBefore!==undefined){
+                //     $scope.blocktimeAverageAll = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
+                // }
+            });
 
-                  range = $scope.blockNum;
-                  var blockPast = web3.eth.getBlock(1);
-                  if(blockBefore!==undefined){
-                  $scope.blocktimeAverageAll = ((blockNewest.timestamp - blockPast.timestamp)/range).toFixed(2);
-                  }
-
-                  //fastAnswers($scope);
-                  //$scope=BlockExplorerConstants($scope);
-
-              }
-          }
           // Block Explorer Info
           $scope.isConnected = web3.isConnected();
           //$scope.peerCount = web3.net.peerCount;
@@ -215,21 +187,63 @@ angular.module('ethExplorer')
         }
 
         function updateTXList() {
-            var currentTXnumber = web3.eth.blockNumber;
-            $scope.txNumber = currentTXnumber;
             $scope.recenttransactions = [];
-            for (var i=0; i < 10 && currentTXnumber - i >= 0; i++) {
-              $scope.recenttransactions.push(web3.eth.getTransactionFromBlock(currentTXnumber - i));
-            }
+
+            new Promise((resolve, reject) => {
+                web3.eth.getBlockNumber((error, blockNumber) => {
+                    if(error){ reject(error); }
+                    else { resolve(blockNumber) }
+                });
+            })
+            .then(blockNumber => {
+                $scope.txNumber = bcurrentTXnumber;
+                let requests = [];
+                for (let i=0; i < 10 && currentTXnumber - i >= 0; i++) {
+                    requests.push(new Promise((resolve, reject) => {
+                        web3.eth.getTransactionFromBlock(currentTXnumber - i, (error, result)=>{
+                            if(error){ reject(error); }
+                            else { resolve(result) }
+                        });
+                    }));
+                }
+
+                return Promise.all(requests);
+            })
+            .then(transactions => {
+                $scope.recenttransactions = transactions;
+                $scope.$apply();
+            });
         }
 
         function updateBlockList() {
             var currentBlockNumber = web3.eth.blockNumber;
             $scope.blockNumber = currentBlockNumber;
             $scope.blocks = [];
+            let requests = [];
+
             for (var i=0; i < 10 && currentBlockNumber - i >= 0; i++) {
-              $scope.blocks.push(web3.eth.getBlock(currentBlockNumber - i));
+                requests.push(new Promise((resolve, reject) => {
+                    web3.eth.getBlock(currentBlockNumber - i, false, (error, block) => {
+                        if(error){
+                            reject(error);
+                        }
+                        else {
+                            resolve(block);
+                        }
+                    });
+                }));
             }
+            Promise.all(requests)
+                .then(blocks => {
+                    console.log("lollerrimo");
+                    console.log(blocks);
+                    blocks
+                        .sort((a,b) => { return b.number - a.number; })
+                        .forEach((b) => { $scope.blocks.push(b); });
+                    console.log($scope.blocks);
+                    $scope.$apply();
+                });
+
         }
 
     });
