@@ -3,15 +3,15 @@
 // TODO: Put go into a config.js
 // But how to include a file from local?
 
-var GETH_HOSTNAME	= "{GETH_HOSTNAME}";	// put your IP address!
-var GETH_RPCPORT	= {GETH_RPCPORT}; 	// for geth --rpcport GETH_RPCPORT
-var GETH_PROTOCOL       = "{GETH_PROTOCOL}";
+// var GETH_HOSTNAME	= "{GETH_HOSTNAME}";	// put your IP address!
+// var GETH_RPCPORT	= {GETH_RPCPORT}; 	// for geth --rpcport GETH_RPCPORT
+// var GETH_PROTOCOL       = "{GETH_PROTOCOL}";
 
-/*
-var GETH_HOSTNAME	= "testnet.carechain.io";	// put your IP address!
+
+var GETH_HOSTNAME	= "10.100.87.166";	// put your IP address!
 var GETH_RPCPORT	= 8545; 	// for geth --rpcport GETH_RPCPORT
-var GETH_PROTOCOL       = "https";      
-*/
+var GETH_PROTOCOL       = "http";
+
 
 var APP_HOSTNAME 	= "See package.json --> scripts --> start: Change 'localhost'!!!";
 var APP_PORT 		= "See package.json --> scripts --> start: Perhaps change '8000'";

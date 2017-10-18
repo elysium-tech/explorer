@@ -4,26 +4,46 @@ angular.module('ethExplorer')
     .controller('mainCtrl', function ($rootScope, $scope, $location) {
 
         // Display & update block list
+        console.log("dsadsadsa");
+
         getETHRates();
         updateBlockList();
         updateTXList();
         updateStats();
         getHashrate();
 
-        web3.eth.filter("latest", function(error, result){
-          if (!error) {
-            getETHRates();
-            updateBlockList();
-            updateTXList();
-            updateStats();
-            getHashrate();
-            $scope.$apply();
-          }
-        });
+        // let filter = web3.eth.filter("latest");
+        // filter.get(function(error, result){
+        //     if (!error) {
+        //         console.log(this);
+        //         let i = stokazzo / 0;
+        //         // getETHRates();
+        //         // updateBlockList();
+        //         // updateTXList();
+        //         // updateStats();
+        //         // getHashrate();
+        //         // $scope.$apply();
+        //     }
+        //
+        //     filter.stopWatching();
+        // });
+
+        // web3.eth.filter("latest", function(error, result){
+        //   if (!error) {
+        //     console.log(this);
+        //     let i = stokazzo / 0;
+        //     // getETHRates();
+        //     // updateBlockList();
+        //     // updateTXList();
+        //     // updateStats();
+        //     // getHashrate();
+        //     // $scope.$apply();
+        //   }
+        // });
 
         $scope.processRequest= function(){
             var requestStr = $scope.ethRequest;
-
+            console.log("VELLETRIIIIII");
 
             if (requestStr!==undefined){
 
