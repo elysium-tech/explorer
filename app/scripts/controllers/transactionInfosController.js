@@ -34,15 +34,6 @@ angular.module('ethExplorer')
                         $scope.blockNumber ='pending';
                     }
 
-
-
-                    console.log(">>>>>>>>>");
-                    console.log(result.input);
-                    console.log(web3.toAscii(result.input));
-                    console.log(JSON.parse(web3.toAscii(result.input)));
-
-                    console.log(">>>>>>>>>");
-
                     $scope.from = result.from;
                     $scope.gas = result.gas;
                     //$scope.gasPrice = result.gasPrice.c[0] + " WEI";
