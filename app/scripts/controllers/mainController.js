@@ -188,6 +188,7 @@ angular.module('ethExplorer')
 
         function updateTXList() {
             $scope.recenttransactions = [];
+            $scope.txBlockLooking = -1;
 
             new Promise((resolve, reject) => {
                 web3.eth.getBlockNumber((error, blockNumber) => {
@@ -196,13 +197,20 @@ angular.module('ethExplorer')
                 });
             })
             .then(blockNumber => {
-                $scope.txNumber = bcurrentTXnumber;
+                $scope.txNumber = blockNumber;
+                currentTXnumber = blockNumber;
+
                 let requests = [];
                 for (let i=0; i < 10 && currentTXnumber - i >= 0; i++) {
                     requests.push(new Promise((resolve, reject) => {
                         web3.eth.getTransactionFromBlock(currentTXnumber - i, (error, result)=>{
                             if(error){ reject(error); }
-                            else { resolve(result) }
+                            else {
+                                if(result){
+                                    $scope.recenttransactions.push(result);
+                                }
+                                resolve(result);
+                            }
                         });
                     }));
                 }
@@ -210,7 +218,7 @@ angular.module('ethExplorer')
                 return Promise.all(requests);
             })
             .then(transactions => {
-                $scope.recenttransactions = transactions;
+                $scope.recenttransactions.sort((a,b) => { return a.blockNumber = b.blockNumber; });
                 $scope.$apply();
             });
         }
@@ -235,12 +243,9 @@ angular.module('ethExplorer')
             }
             Promise.all(requests)
                 .then(blocks => {
-                    console.log("lollerrimo");
-                    console.log(blocks);
                     blocks
                         .sort((a,b) => { return b.number - a.number; })
                         .forEach((b) => { $scope.blocks.push(b); });
-                    console.log($scope.blocks);
                     $scope.$apply();
                 });
 

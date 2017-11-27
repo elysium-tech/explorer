@@ -8,7 +8,9 @@ angular.module('ethExplorer')
             $scope.txId=$routeParams.transactionId;
 
 
-
+            console.log("::::::::::::::");
+            console.log($scope.txId);
+            console.log("::::::::::::::");
 
             if($scope.txId!==undefined) { // add a test to check if it match tx paterns to avoid useless API call, clients are not obliged to come from the search form...
 
@@ -31,6 +33,16 @@ angular.module('ethExplorer')
                     else{
                         $scope.blockNumber ='pending';
                     }
+
+
+
+                    console.log(">>>>>>>>>");
+                    console.log(result.input);
+                    console.log(web3.toAscii(result.input));
+                    console.log(JSON.parse(web3.toAscii(result.input)));
+
+                    console.log(">>>>>>>>>");
+
                     $scope.from = result.from;
                     $scope.gas = result.gas;
                     //$scope.gasPrice = result.gasPrice.c[0] + " WEI";
