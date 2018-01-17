@@ -8,7 +8,7 @@
 // var GETH_PROTOCOL       = "{GETH_PROTOCOL}";
 
 
-var GETH_HOSTNAME	= "10.100.87.166";	// put your IP address!
+var GETH_HOSTNAME	= "34.241.255.95";	// put your IP address!
 var GETH_RPCPORT	= 8545; 	// for geth --rpcport GETH_RPCPORT
 var GETH_PROTOCOL       = "http";
 
